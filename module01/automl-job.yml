@@ -1,0 +1,26 @@
+ $schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
+type: automl
+task: classification
+experiment_name: diabetes-automl-classification
+compute: azureml:cpu-cluster
+training_data:
+	type: mltable
+	path: azureml:diabetes-mltable:1
+test_data:
+	type: mltable
+	path: azureml:diabetes-test-mltable:1
+target_column_name: Diabetic
+primary_metric: accuracy
+limits:
+	timeout_minutes: 30
+	trial_timeout_minutes: 10
+	max_trials: 5
+	enable_early_termination: true
+training:
+	allowed_training_algorithms:
+		- logistic_regression
+		- decision_tree
+		- random_forest
+		- light_gbm
+		- xg_boost_classifier
+		- knn

@@ -1,7 +1,7 @@
 import os
 
 from azure.ai.ml import MLClient
-from azure.ai.ml.entities import AmlCompute
+from azure.ai.ml.entities import AmlCompute, IdentityConfiguration, ManagedIdentityConfiguration
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
@@ -26,6 +26,12 @@ compute_cluster = AmlCompute(
 	size="STANDARD_DS11_V2",
 	min_instances=0,
 	max_instances=1,
+	identity=IdentityConfiguration(
+		type="UserAssigned",
+		user_assigned_identities=[
+			ManagedIdentityConfiguration(resource_id=os.environ["AZURE_USER_ASSIGNED_IDENTITY_ID"])
+		],
+	),
 )
 
 result = ml_client.compute.begin_create_or_update(compute_cluster).result()
