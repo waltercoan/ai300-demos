@@ -1,10 +1,13 @@
 import os  # acesso às variáveis de ambiente carregadas do .env
-
 from azure.ai.ml import MLClient, command  # cliente principal e construtor de command job do Azure ML
 from azure.identity import DefaultAzureCredential  # autenticação usando credenciais do Azure
-from dotenv import load_dotenv  # carrega variáveis do arquivo .env para o ambiente
+try:
+    from dotenv import load_dotenv  # carrega variáveis do arquivo .env para o ambiente
+except ImportError:
+    load_dotenv = None
 
-load_dotenv()  # lê o arquivo .env na raiz do projeto e popula os.environ
+if load_dotenv:
+    load_dotenv()  # lê o arquivo .env na raiz do projeto e popula os.environ
 
 # Dados da assinatura e do workspace do Azure ML, lidos do arquivo .env
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
@@ -28,12 +31,10 @@ job = command(
     command="python demo07.py",  # instala dependências e executa o treino
     environment="AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu:36",  # ambiente curado do Azure ML
     environment_variables={
-        "AZURE_SUBSCRIPTION_ID": subscription_id,
-        "AZURE_RESOURCE_GROUP": resource_group,
-        "AZURE_WORKSPACE_NAME": workspace_name,
+        # "CHAVE": "VALOR"
     },
     compute=compute_name,  # destino de computação
-    experiment_name="demo07-experiment",  # nome do experimento no Azure ML Studio
+    experiment_name="demo07-nlp-sentiment",  # deve corresponder ao mlflow.set_experiment() em demo07.py
     display_name="demo07-command-job",  # nome de exibição do job
     description="Job do Azure ML para executar o demo07.py",
 )

@@ -2,33 +2,20 @@ import os
 
 import mlflow
 import torch  # importa a biblioteca PyTorch
-from azureml.core import Workspace
-from dotenv import load_dotenv
 from torch import nn  # importa o módulo de redes neurais
+import tempfile
 
-load_dotenv()  # carrega as variáveis de ambiente do arquivo .env
+try:
+    from dotenv import load_dotenv  # carrega variáveis do arquivo .env para o ambiente
+except ImportError:
+    load_dotenv = None
 
-# Conexão com o Azure Machine Learning usando o workspace configurado no ambiente
-subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
-resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
-workspace_name = os.environ.get("AZURE_WORKSPACE_NAME")
+if load_dotenv:
+    load_dotenv()  # lê o arquivo .env na raiz do projeto e popula os.environ
 
-if subscription_id and resource_group and workspace_name:
-    try:
-        ws = Workspace.get(
-            name=workspace_name,
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-        )
-        tracking_uri = ws.get_mlflow_tracking_uri()
-        mlflow.set_tracking_uri(tracking_uri)
-        print(f"Conectado ao Azure ML Workspace: {workspace_name}")
-    except Exception as e:
-        print(f"Não foi possível conectar ao Azure ML. Usando tracking local. Erro: {e}")
-        mlflow.set_tracking_uri("file:///tmp/mlruns")
-else:
-    mlflow.set_tracking_uri("file:///tmp/mlruns")
-    print("Variáveis do Azure ML não encontradas. Usando tracking local do MLflow.")
+# mlflow_tracking_uri = os.environ.get("MLFLOW_TRACKING_URI",None)
+# if mlflow_tracking_uri is not None:
+#     mlflow.set_tracking_uri(mlflow_tracking_uri)
 
 mlflow.set_experiment("demo07-nlp-sentiment")
 
@@ -93,6 +80,8 @@ with mlflow.start_run(run_name="demo07-sentiment-nlp") as run:
     )
     mlflow.set_tag("model_type", "linear_classifier")
     mlflow.set_tag("task", "sentiment_analysis")
+    log_text = []
+    log_text.append(f"Run ID: {run.info.run_id} - Treinamento")
 
     # Treinamento
     for epoch in range(1000):  # repete 1000 épocas
@@ -106,6 +95,8 @@ with mlflow.start_run(run_name="demo07-sentiment-nlp") as run:
         if epoch % 100 == 0:  # imprime a perda a cada 100 épocas
             print(f"Epoch {epoch:03d} | loss: {loss.item():.4f}")  # mostra o valor da perda
             mlflow.log_metric("loss", float(loss.item()), step=epoch)
+
+    log_text.append(f"Run ID: {run.info.run_id} - Teste")
 
     # Teste com uma nova frase
     nova_frase = "eu amei este produto"  # frase nova para classificação
@@ -121,6 +112,7 @@ with mlflow.start_run(run_name="demo07-sentiment-nlp") as run:
         mlflow.log_metric("positive_probability", float(prob))
         mlflow.log_param("test_sentence", nova_frase)
 
+    log_text.append(f"Run ID: {run.info.run_id} - Exportando o modelo")
     if os.path.exists(script_path):
         mlflow.log_artifact(script_path, artifact_path="source")
         print(f"Arquivo fonte registrado: {script_path}")
@@ -136,3 +128,14 @@ with mlflow.start_run(run_name="demo07-sentiment-nlp") as run:
     mlflow.pytorch.log_model(model, artifact_path="model")
     print(f"Run do MLflow: {run.info.run_id}")
     print(f"Tracking URI: {mlflow.get_tracking_uri()}")
+    log_text.append(f"Run ID: {run.info.run_id} - {mlflow.get_tracking_uri()}")
+    
+    with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as tmp_file:
+        tmp_file.write("\n".join(log_text))
+        tmp_file_path = tmp_file.name
+
+    # Envia o arquivo como artifact para o MLflow
+    mlflow.log_artifact(tmp_file_path, artifact_path="logs")
+
+    # Remove o arquivo local temporário (opcional)
+    os.remove(tmp_file_path)
