@@ -1,0 +1,28 @@
+$schema: https://azuremlschemas.azureedge.net/latest/sweepJob.schema.json
+type: sweep
+
+trial:
+  code: .
+  command: >-
+    python demo09.py --learning-rate=${{search_space.learning_rate}}
+  environment: azureml:AzureML-pytorch-1.10-ubuntu18.04-py38-cuda11-gpu:36
+
+search_space:
+  learning_rate:
+    type: choice
+    values: [0.1, 0.05, 0.01]
+
+objective:
+  goal: maximize
+  primary_metric: validation_accuracy
+
+sampling_algorithm: grid
+
+early_termination:
+  type: median_stopping
+  evaluation_interval: 1
+  delay_evaluation: 5
+
+display_name: demo09-learning-rate-sweep
+experiment_name: demo09-nlp-sentiment
+description: Sweep com grid sampling para avaliar o learning-rate do demo09.py

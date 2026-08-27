@@ -87,3 +87,16 @@ az ml job create \
   --resource-group "$AZURE_RESOURCE_GROUP"
 ```
 
+## Parameter command job and Sweep jobs
+
+- [Python :: demo09](./module01/demo09.py)
+- [Python :: demo10](./module01/demo10.py)
+
+- [YAML :: demo10-sweep-job](./module01/demo10-sweep-job.yml)
+```bash
+az ml job create \
+	--file ./module01/demo10-sweep-job.yml \
+	--workspace-name "$AZURE_WORKSPACE_NAME" \
+	--resource-group "$AZURE_RESOURCE_GROUP"
+
+```
