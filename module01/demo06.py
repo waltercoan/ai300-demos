@@ -52,6 +52,9 @@ classification_job.set_limits(
     enable_early_termination=True,
 )
 
+# Habilita a featurização automática do AutoML para transformar colunas de forma inteligente
+classification_job.set_featurization(mode=automl.FeaturizationMode.AUTO)
+
 # Restringe o AutoML aos algoritmos de classificação informados nesta lista
 classification_job.set_training(
     allowed_training_algorithms=[

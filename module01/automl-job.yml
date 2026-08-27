@@ -1,4 +1,4 @@
- $schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
+$schema: https://azuremlschemas.azureedge.net/latest/autoMLJob.schema.json
 type: automl
 task: classification
 experiment_name: diabetes-automl-classification

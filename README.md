@@ -67,3 +67,23 @@ az ml job create \
 	--workspace-name "$AZURE_WORKSPACE_NAME" \
 	--resource-group "$AZURE_RESOURCE_GROUP"
 ```
+
+## Create Job
+
+```yaml
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+code: .
+command: python ./module01/demo07.py
+environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+compute: azureml:cluster-compute
+experiment_name: demo07
+description: Run demo07.py
+```
+
+```bash
+az ml job create \
+  --file ./module01/demo07-job.yml \
+  --workspace-name "$AZURE_WORKSPACE_NAME" \
+  --resource-group "$AZURE_RESOURCE_GROUP"
+```
+
