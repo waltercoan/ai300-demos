@@ -22,7 +22,9 @@ az group create --name 'rg-ai300-test-brazilsouth-001' --location brazilsouth
 az ml workspace create --name 'aml-ai300-course' -g 'rg-ai300-test-brazilsouth-001'
 ```
 
-## Configuração COMPUTE
+## Modulo 01
+
+### Configuração COMPUTE
 
 [Compute Instances](https://learn.microsoft.com/en-us/azure/machine-learning/concept-compute-instance?view=azureml-api-2)
 
@@ -35,7 +37,7 @@ az ml compute create --name 'waltecoan-compute' --size STANDARD_DS11_V2 --type C
 az ml compute create --name 'cluster-compute' --size STANDARD_DS11_V2 --type AmlCompute --max-instance 2 -w aml-ai300-course -g rg-ai300-test-brazilsouth-001
 ```
 
-## Criação de um Data Asset
+### Criação de um Data Asset
 
 [Data Asset](https://learn.microsoft.com/en-us/azure/machine-learning/how-to-create-data-assets)
 
@@ -52,7 +54,7 @@ az ml data create \
 	--resource-group "$AZURE_RESOURCE_GROUP"
 ```
 
-## AutoML
+### AutoML
 
 [AutoML](https://learn.microsoft.com/en-us/azure/machine-learning/concept-automated-ml)
 
@@ -68,7 +70,7 @@ az ml job create \
 	--resource-group "$AZURE_RESOURCE_GROUP"
 ```
 
-## Create Job
+### Create Job
 
 ```yaml
 $schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
@@ -87,7 +89,7 @@ az ml job create \
   --resource-group "$AZURE_RESOURCE_GROUP"
 ```
 
-## Parameter command job and Sweep jobs
+### Parameter command job and Sweep jobs
 
 - [Python :: demo09](./module01/demo09.py)
 - [Python :: demo10](./module01/demo10.py)
@@ -100,3 +102,10 @@ az ml job create \
 	--resource-group "$AZURE_RESOURCE_GROUP"
 
 ```
+
+## Modulo 02
+
+### Pipelines
+
+- [Python :: component01](./module01/component01.py)
+- [Python :: demo11](./module01/demo11.py)
