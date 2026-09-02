@@ -109,3 +109,27 @@ az ml job create \
 
 - [Python :: component01](./module01/component01.py)
 - [Python :: demo11](./module01/demo11.py)
+
+
+### Endpoint Online test
+
+```json
+{
+  "input_data": {
+    "columns": [
+      "PatientID",
+      "Pregnancies",
+      "PlasmaGlucose",
+      "DiastolicBloodPressure",
+      "TricepsThickness",
+      "SerumInsulin",
+      "BMI",
+      "DiabetesPedigree",
+      "Age"
+    ],
+    "index": [0],
+    "data": [[4, 8,171,42,29,160,35.48224692,0.082671083,22]]
+  },
+  "params": {}
+}
+```
